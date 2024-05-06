@@ -6,7 +6,6 @@ import sys
 
 import geopandas as gpd
 import cartopy.crs as ccrs
-pip install scikit-learn as sklearn
 from sklearn.linear_model import LinearRegression
 import numpy as np
 import seaborn as sns
