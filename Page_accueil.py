@@ -109,11 +109,6 @@ st.sidebar.markdown("<h1 style='text-align: right; text-transform: lowercase;'>Y
 
 
 
-# URL raw vers le fichier shapefile des régions sur GitHub
-shapefile = 'https://github.com/Ssoumano/projet_streamlit/raw/main/regions-20180101.shp'
-
-# Charger le shapefile dans un GeoDataFrame
-gdf = gpd.read_file(shapefile)
 
 
 
