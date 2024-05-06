@@ -1,14 +1,14 @@
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
 from PIL import Image
 import sys
+
 import geopandas as gpd
 import cartopy.crs as ccrs
 from sklearn.linear_model import LinearRegression
 import numpy as np
 import seaborn as sns
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import streamlit as st
 import io
 
 
@@ -106,6 +106,10 @@ for i, j in zip(x, y):
      ax.annotate(str(j), xy=(i, j), xytext=(5, -10), textcoords='offset points')
 st.pyplot(fig)
 st.sidebar.markdown("<h1 style='text-align: right; text-transform: lowercase;'>Your text here</h1>", unsafe_allow_html=True)
+
+
+
+
 
 # Chemin vers le fichier shapefile des régions
 shapefile_path = '/Users/seydou/Downloads/regions-20180101-shp/regions-20180101.shp'
@@ -222,8 +226,3 @@ for region in df['nom_zone'].unique():
 df_predict = pd.DataFrame({'nom_zone': df['nom_zone'].unique(), 'Predicted Classe': predicted_classes})
 
 st.dataframe(df_predict)
-
-
-
-
-
