@@ -115,7 +115,7 @@ st.sidebar.markdown("<h1 style='text-align: right; text-transform: lowercase;'>Y
 shapefile_path = 'regions-20180101.shp'
 
 # Charger le shapefile dans un GeoDataFrame
-gdf = gpd.read_file(shapefile_path)
+gdf = gpd.read_file(regions-20180101.shp')
 
 # Accès au fichier
 file_path = "data-gouv-series-chrono.xlsx"
