@@ -24,7 +24,7 @@ firstname = st.sidebar.text_input("Prénom", "Seydou")
 linkedin = st.sidebar.text_input("LinkedIn", "https://www.linkedin.com/in/seydou-soumano/")
 github = st.sidebar.text_input("GitHub", "https://github.com/Ssoumano")
 if option == "Plus de données":
-    exec(open('/Users/seydou/Desktop/Page_2.py').read())
+    exec(open('Page_2.py').read())
     sys.exit()
 
 elif option == "Page d'accueil":
@@ -42,7 +42,7 @@ st.title("(Overview of the used database)")
 st.markdown("<p style='text-align: center; font-size: small;'> </p>", unsafe_allow_html=True)
 
 # Téléchargement des données
-file_path = "/Users/seydou/Downloads/process_2/data-gouv-series-chrono.xlsx"
+file_path = "data-gouv-series-chrono.xlsx"
 # conversion en Dataframe
 base1 = pd.read_excel(file_path)
 
@@ -112,13 +112,13 @@ st.sidebar.markdown("<h1 style='text-align: right; text-transform: lowercase;'>Y
 
 
 # Chemin vers le fichier shapefile des régions
-shapefile_path = '/Users/seydou/Downloads/regions-20180101-shp/regions-20180101.shp'
+shapefile_path = 'regions-20180101.shp'
 
 # Charger le shapefile dans un GeoDataFrame
 gdf = gpd.read_file(shapefile_path)
 
 # Accès au fichier
-file_path = "/Users/seydou/Downloads/process_2/data-gouv-series-chrono.xlsx"
+file_path = "data-gouv-series-chrono.xlsx"
 
 # Charger le fichier Excel
 base1 = pd.read_excel(file_path)
