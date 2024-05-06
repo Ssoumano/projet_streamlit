@@ -107,6 +107,12 @@ for i, j in zip(x, y):
 st.pyplot(fig)
 st.sidebar.markdown("<h1 style='text-align: right; text-transform: lowercase;'>Your text here</h1>", unsafe_allow_html=True)
 
+
+
+gdf = gpd.read_file('regions-20180101.shp')
+
+
+
 # Accès au fichier
 file_path = "data-gouv-series-chrono.xlsx"
 
