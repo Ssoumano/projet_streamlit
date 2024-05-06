@@ -110,7 +110,7 @@ st.sidebar.markdown("<h1 style='text-align: right; text-transform: lowercase;'>Y
 
 
 # Chemin vers le fichier shapefile des régions
-shapefile_path = 'projet_streamlit/regions-20180101.shp'
+shapefile_path = 'https://drive.google.com/file/d/1yU-46dXTPx1uuKDH-ro58NGbf6pjzlHV/view?usp=sharing'
 
 # Charger le shapefile dans un GeoDataFrame
 gdf = gpd.read_file(shapefile_path)
