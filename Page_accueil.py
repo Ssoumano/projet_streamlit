@@ -109,9 +109,6 @@ st.sidebar.markdown("<h1 style='text-align: right; text-transform: lowercase;'>Y
 
 
 
-
-
-
 # Accès au fichier
 file_path = "data-gouv-series-chrono.xlsx"
 
