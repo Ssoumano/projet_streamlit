@@ -32,8 +32,8 @@ elif option == "Page d'accueil":
     x=0
 
 # Ajouter les logos
-st.sidebar.image("/Users/seydou/Desktop/LOGO_EFREI-PRINT_EFREI-WEB.png", use_column_width=True)
-st.sidebar.image("/Users/seydou/Desktop/téléchargement.png", use_column_width=True)
+st.sidebar.image("LOGO_EFREI-PRINT_EFREI-WEB.png", use_column_width=True)
+st.sidebar.image("téléchargement.png", use_column_width=True)
 
 title = "<h1 style='text-align: center; color: blue; text-decoration: underline;'>Visualization of the number of crimes in France</h1>"
 st.markdown(title, unsafe_allow_html=True)
