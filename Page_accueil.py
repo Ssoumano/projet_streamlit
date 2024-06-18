@@ -130,7 +130,8 @@ france_regions['nom'] = france_regions['name']  # Assumons que 'name' est la col
 gdf_merged = france_regions.set_index('nom').join(wx2021.set_index('nom_zone'), how='inner')
 
 # Vérification et correction des géométries
-gdf_merged = gdf_merged[~gdf_merged.is_empty & gdf_merged.is_valid]
+gdf_merged = gdf_merged[gdf_merged.geometry.notnull()]
+gdf_merged = gdf_merged[gdf_merged.is_valid]
 
 # Création de la carte
 fig, ax = plt.subplots(figsize=(12, 8))
