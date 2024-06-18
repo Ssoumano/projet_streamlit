@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-from PIL import Image
-import sys
 import geopandas as gpd
 from sklearn.linear_model import LinearRegression
 import numpy as np
@@ -40,7 +38,7 @@ st.title("(Overview of the used database)")
 
 # Téléchargement des données
 file_path = "data-gouv-series-chrono.xlsx"
-base1 = pd.read_excel(file_path) 
+base1 = pd.read_excel(file_path)
 
 # Création de nouvelles colonnes pour extraire les noms et types de zones
 def extract_nom_zone(row):
@@ -102,19 +100,16 @@ for i, j in zip(x, y):
 st.pyplot(fig)
 
 # Utilisation d'une API pour obtenir les données géographiques des régions françaises
-gdf = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+gdf = world[(world.pop_est > 0) & (world.name != "Antarctica")]
 
-# Vérifiez les colonnes disponibles dans gdf
-st.write(gdf.columns)
+# Vérification et correction des géométries
+gdf = gdf.set_index('name')
+gdf = gdf[gdf.index == 'France']
 
-# Filtrer pour obtenir uniquement la France
-# Utilisez la colonne appropriée, par exemple 'name' ou 'admin'
-if 'name' in gdf.columns:
-    france = gdf[gdf['name'] == 'France']
-elif 'admin' in gdf.columns:
-    france = gdf[gdf['admin'] == 'France']
-else:
-    st.error("La colonne pour filtrer les données françaises est introuvable dans le dataset géographique.")
+# Vérification de la validité des géométries
+gdf = gdf[gdf.geometry.notnull()]
+gdf = gdf[gdf.is_valid]
 
 # Classement des régions par nombre de crimes pour l'année 2021
 wx2021 = grouped_data[grouped_data['Unite temps'] == '2021']
@@ -123,15 +118,11 @@ wx2021['Classe'] = pd.qcut(wx2021['Valeurs'], q=3, labels=['Low crimes number', 
 
 # Assurez-vous que les données géographiques et les données de criminalité peuvent être fusionnées correctement
 # Si la colonne 'name' ne correspond pas aux noms des régions, ajustez en conséquence
-france_regions = france.copy()
-france_regions['nom'] = france_regions['name']  # Assumons que 'name' est la colonne avec les noms des régions
+france_regions = gdf.copy()
+france_regions['nom'] = france_regions.index  # Assumons que 'name' est la colonne avec les noms des régions
 
 # Fusionner les données
 gdf_merged = france_regions.set_index('nom').join(wx2021.set_index('nom_zone'), how='inner')
-
-# Vérification et correction des géométries
-gdf_merged = gdf_merged[gdf_merged.geometry.notnull()]
-gdf_merged = gdf_merged[gdf_merged.is_valid]
 
 # Création de la carte
 fig, ax = plt.subplots(figsize=(12, 8))
@@ -142,7 +133,7 @@ gdf_merged.plot(ax=ax, edgecolor='black', linewidth=0.5, facecolor=gdf_merged['c
 # Ajout des noms des régions sur la carte
 for _, row in gdf_merged.iterrows():
     x, y = row['geometry'].centroid.x, row['geometry'].centroid.y
-    ax.text(x, y, row['name'], fontsize=8, ha='center', va='center')
+    ax.text(x, y, row.name, fontsize=8, ha='center', va='center')
 
 # Ajout de la légende
 legend_elements = [
