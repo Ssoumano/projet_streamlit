@@ -4,14 +4,11 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import sys
 import geopandas as gpd
-import cartopy.crs as ccrs
 from sklearn.linear_model import LinearRegression
 import numpy as np
-import seaborn as sns
-import io
 
 # Menu latéral pour sélectionner les pages
-Options = st.sidebar.selectbox("Pages", ("Page d'accueil", "Plus de données"))
+option = st.sidebar.selectbox("Pages", ("Page d'accueil", "Plus de données"))
 
 # Titre du menu
 st.sidebar.title("Page d'accueil")
@@ -104,33 +101,31 @@ for i, j in zip(x, y):
     ax.annotate(str(j), xy=(i, j), xytext=(5, -10), textcoords='offset points')
 st.pyplot(fig)
 
-# Chemin vers le fichier shapefile des régions
-shapefile_path = 'regions-20180101.shp'
-gdf = gpd.read_file(shapefile_path)
+# Utilisation d'une API pour obtenir les données géographiques des régions françaises
+gdf = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+
+# Filtrer pour obtenir uniquement la France
+france = gdf[gdf['name'] == 'France']
 
 # Classement des régions par nombre de crimes pour l'année 2021
 wx2021 = grouped_data[grouped_data['Unite temps'] == '2021']
 wx2021 = wx2021.sort_values(by='Valeurs', ascending=False)
 wx2021['Classe'] = pd.qcut(wx2021['Valeurs'], q=3, labels=['Low crimes number', 'Medium crimes number', 'High crimes number'])
 
-# Filtrage des régions à exclure
-regions_to_exclude = ['Martinique', 'Guyane', 'Mayotte', 'Guadeloupe', 'La Réunion']
-gdf_filtered = gdf[~gdf['nom'].isin(regions_to_exclude)].reset_index(drop=True)
-
-# Fusion des données géographiques avec les classes
-gdf_merged = gdf_filtered.merge(wx2021, left_on='nom', right_on='nom_zone')
+# Ajouter les données de classification des crimes à la géométrie de la France
+france = france.to_crs(epsg=4326)
+france['Classe'] = wx2021['Classe'].values
 
 # Création de la carte
 fig, ax = plt.subplots(figsize=(12, 8))
 colors = {'Low crimes number': 'green', 'Medium crimes number': 'yellow', 'High crimes number': 'red'}
-gdf_merged['color'] = gdf_merged['Classe'].map(colors)
-gdf_merged.plot(ax=ax, edgecolor='black', linewidth=0.5, facecolor=gdf_merged['color'], legend=True)
+france['color'] = france['Classe'].map(colors)
+france.plot(ax=ax, edgecolor='black', linewidth=0.5, facecolor=france['color'], legend=True)
 
 # Ajout des noms des régions sur la carte
-for _, row in gdf_merged.iterrows():
-    region = row['nom']
+for _, row in france.iterrows():
     x, y = row['geometry'].centroid.x, row['geometry'].centroid.y
-    ax.text(x, y, region, fontsize=8, ha='center', va='center')
+    ax.text(x, y, row['name'], fontsize=8, ha='center', va='center')
 
 # Ajout de la légende
 legend_elements = [
