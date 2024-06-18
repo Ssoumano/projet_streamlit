@@ -101,23 +101,33 @@ for i, j in zip(x, y):
     ax.annotate(str(j), xy=(i, j), xytext=(5, -10), textcoords='offset points')
 st.pyplot(fig)
 
+# Vérifiez les colonnes disponibles dans gdf
+st.write(gdf.columns)
+
 # Utilisation d'une API pour obtenir les données géographiques des régions françaises
 gdf = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
 # Filtrer pour obtenir uniquement la France
-france = gdf[gdf['name'] == 'France']
+# Utilisez la colonne appropriée, par exemple 'name' ou 'admin'
+if 'name' in gdf.columns:
+    france = gdf[gdf['name'] == 'France']
+elif 'admin' in gdf.columns:
+    france = gdf[gdf['admin'] == 'France']
+else:
+    st.error("La colonne pour filtrer les données françaises est introuvable dans le dataset géographique.")
 
 # Classement des régions par nombre de crimes pour l'année 2021
 wx2021 = grouped_data[grouped_data['Unite temps'] == '2021']
 wx2021 = wx2021.sort_values(by='Valeurs', ascending=False)
 wx2021['Classe'] = pd.qcut(wx2021['Valeurs'], q=3, labels=['Low crimes number', 'Medium crimes number', 'High crimes number'])
 
-# Filtrage des régions pour obtenir les noms correspondants
-france_regions = france[france['iso_a2'] == 'FR'].copy()
-france_regions['nom'] = france_regions['name']  # Assuming 'name' is the column with region names
-
 # Assurez-vous que les données géographiques et les données de criminalité peuvent être fusionnées correctement
-gdf_merged = france_regions.set_index('nom').join(wx2021.set_index('nom_zone'))
+# Si la colonne 'name' ne correspond pas aux noms des régions, ajustez en conséquence
+france_regions = france.copy()
+france_regions['nom'] = france_regions['name']  # Assumons que 'name' est la colonne avec les noms des régions
+
+# Fusionner les données
+gdf_merged = france_regions.set_index('nom').join(wx2021.set_index('nom_zone'), how='inner')
 
 # Création de la carte
 fig, ax = plt.subplots(figsize=(12, 8))
