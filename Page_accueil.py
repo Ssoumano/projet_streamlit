@@ -101,11 +101,11 @@ for i, j in zip(x, y):
     ax.annotate(str(j), xy=(i, j), xytext=(5, -10), textcoords='offset points')
 st.pyplot(fig)
 
-# Vérifiez les colonnes disponibles dans gdf
-st.write(gdf.columns)
-
 # Utilisation d'une API pour obtenir les données géographiques des régions françaises
 gdf = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+
+# Vérifiez les colonnes disponibles dans gdf
+st.write(gdf.columns)
 
 # Filtrer pour obtenir uniquement la France
 # Utilisez la colonne appropriée, par exemple 'name' ou 'admin'
