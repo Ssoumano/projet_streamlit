@@ -112,18 +112,21 @@ wx2021 = grouped_data[grouped_data['Unite temps'] == '2021']
 wx2021 = wx2021.sort_values(by='Valeurs', ascending=False)
 wx2021['Classe'] = pd.qcut(wx2021['Valeurs'], q=3, labels=['Low crimes number', 'Medium crimes number', 'High crimes number'])
 
-# Ajouter les données de classification des crimes à la géométrie de la France
-france = france.to_crs(epsg=4326)
-france['Classe'] = wx2021['Classe'].values
+# Filtrage des régions pour obtenir les noms correspondants
+france_regions = france[france['iso_a2'] == 'FR'].copy()
+france_regions['nom'] = france_regions['name']  # Assuming 'name' is the column with region names
+
+# Assurez-vous que les données géographiques et les données de criminalité peuvent être fusionnées correctement
+gdf_merged = france_regions.set_index('nom').join(wx2021.set_index('nom_zone'))
 
 # Création de la carte
 fig, ax = plt.subplots(figsize=(12, 8))
 colors = {'Low crimes number': 'green', 'Medium crimes number': 'yellow', 'High crimes number': 'red'}
-france['color'] = france['Classe'].map(colors)
-france.plot(ax=ax, edgecolor='black', linewidth=0.5, facecolor=france['color'], legend=True)
+gdf_merged['color'] = gdf_merged['Classe'].map(colors)
+gdf_merged.plot(ax=ax, edgecolor='black', linewidth=0.5, facecolor=gdf_merged['color'], legend=True)
 
 # Ajout des noms des régions sur la carte
-for _, row in france.iterrows():
+for _, row in gdf_merged.iterrows():
     x, y = row['geometry'].centroid.x, row['geometry'].centroid.y
     ax.text(x, y, row['name'], fontsize=8, ha='center', va='center')
 
